@@ -1,26 +1,27 @@
-import P5 from 'p5';
+import P5, { Color, Vector } from 'p5';
 
 import Globals from '../../globals';
 import Boundary from '../core/boundary';
 import { Noise } from '../core/noise';
 import Ray from '../core/ray';
 
-export default class LidarSensor {
+export class LidarSensor {
   private p5: P5;
+  private visual: Lidar.Visual;
 
   private rays: Array<Ray>;
-  private position: P5.Vector;
-  private direction: P5.Vector;
+  private position: Vector;
+  private direction: Vector;
 
   // Results from Boundary detection
-  private lidarReading: Array<P5.Vector>;
+  private lidarReading: Array<Vector>;
   private lidarDistances: Array<number>;
 
-  public constructor(p5: P5, position: P5.Vector, direction: P5.Vector) {
+  public constructor(p5: P5, position: Vector, direction: Vector) {
     this.p5 = p5;
     this.position = position;
     this.direction = direction;
-    this.lidarReading = Array<P5.Vector>(Globals.g().lidarSampling);
+    this.lidarReading = Array<Vector>(Globals.g().lidarSampling);
     this.lidarDistances = Array<number>(Globals.g().lidarSampling);
 
     this.rays = Array<Ray>(Globals.g().lidarSampling);
@@ -49,8 +50,8 @@ export default class LidarSensor {
   };
 
   public update = (
-    position: P5.Vector,
-    direction: P5.Vector,
+    position: Vector,
+    direction: Vector,
     walls: Array<Boundary>
   ): void => {
     this.position = position;
@@ -67,12 +68,12 @@ export default class LidarSensor {
   private look = (walls: Array<Boundary>): void => {
     for (let i = 0; i < this.rays.length; i++) {
       const ray = this.rays[i];
-      let closest: P5.Vector = null;
+      let closest: Vector = null;
       let record: number = Infinity;
       for (let wall of walls) {
-        const pt: P5.Vector | null = ray.cast(this.p5, this.position, wall);
+        const pt: Vector | null = ray.cast(this.p5, this.position, wall);
         if (pt) {
-          const d: number = P5.Vector.dist(this.position, pt);
+          const d: number = Vector.dist(this.position, pt);
           if (d < record) {
             record = d;
             closest = pt;
@@ -88,30 +89,34 @@ export default class LidarSensor {
     }
   };
 
-  public show = (): void => {
-    this.showLines();
+  public setVisual = (visual: Lidar.Visual): void => {
+    this.visual = visual;
+  };
+
+  public show = (color: Color): void => {
+    switch (this.visual) {
+      case Lidar.Visual.Dots:
+        this.showDots(color);
+        break;
+      case Lidar.Visual.Lines:
+        this.showLines(color);
+      default:
+        break;
+    }
     // this.showDots();
   };
 
-  private showLines = () => {
+  private showLines = (color: Color) => {
     for (let i = 0; i < Globals.g().lidarSampling; i++) {
-      let closest: P5.Vector = this.lidarReading[i];
+      let closest: Vector = this.lidarReading[i];
 
       // v is the vector between 2 points
       let v = this.p5
         .createVector(closest.x - +this.position.x, closest.y - this.position.y)
         .normalize();
 
-      this.p5.fill(
-        Globals.g().lidarColor.r,
-        Globals.g().lidarColor.g,
-        Globals.g().lidarColor.b
-      );
-      this.p5.stroke(
-        Globals.g().lidarColor.r,
-        Globals.g().lidarColor.g,
-        Globals.g().lidarColor.b
-      );
+      this.p5.fill(color);
+      this.p5.stroke(color);
       this.p5.line(
         this.position.x,
         this.position.y,
@@ -125,25 +130,17 @@ export default class LidarSensor {
     }
   };
 
-  private showDots = () => {
+  private showDots = (color: Color) => {
     for (let i = 0; i < Globals.g().lidarSampling; i++) {
-      const closest: P5.Vector = this.lidarReading[i];
+      const closest: Vector = this.lidarReading[i];
 
       // v is the vector between 2 points
       let v = this.p5
         .createVector(closest.x - +this.position.x, closest.y - this.position.y)
         .normalize();
 
-      this.p5.fill(
-        Globals.g().lidarColor.r,
-        Globals.g().lidarColor.g,
-        Globals.g().lidarColor.b
-      );
-      this.p5.stroke(
-        Globals.g().lidarColor.r,
-        Globals.g().lidarColor.g,
-        Globals.g().lidarColor.b
-      );
+      this.p5.fill(color);
+      this.p5.stroke(color);
       this.p5.ellipse(
         closest.x +
           v.x * Noise.getNoise(this.p5) * Globals.g().lidarNoiseAmplification,
@@ -155,4 +152,12 @@ export default class LidarSensor {
       this.p5.noStroke();
     }
   };
+}
+
+export namespace Lidar {
+  export enum Visual {
+    Dots,
+    Lines,
+    None,
+  }
 }

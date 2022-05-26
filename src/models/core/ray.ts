@@ -1,18 +1,14 @@
-import P5 from 'p5';
+import P5, { Vector } from 'p5';
 import Boundary from './boundary';
 
 export default class Ray {
-  private direction: P5.Vector;
+  private direction: Vector;
 
-  public constructor(direction: P5.Vector) {
+  public constructor(direction: Vector) {
     this.direction = direction;
   }
 
-  public cast = (
-    p5: P5,
-    position: P5.Vector,
-    wall: Boundary
-  ): P5.Vector | null => {
+  public cast = (p5: P5, position: Vector, wall: Boundary): Vector | null => {
     const x1 = wall.a.x;
     const y1 = wall.a.y;
     const x2 = wall.b.x;
@@ -40,7 +36,7 @@ export default class Ray {
     }
   };
 
-  public update = (direction: P5.Vector) => {
+  public update = (direction: Vector) => {
     this.direction = direction;
   };
 }
