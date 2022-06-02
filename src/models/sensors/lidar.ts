@@ -152,6 +152,10 @@ export class LidarSensor {
       this.p5.noStroke();
     }
   };
+
+  public getLidarDistances = (): Array<number> => {
+    return this.lidarDistances;
+  };
 }
 
 export namespace Lidar {

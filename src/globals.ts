@@ -53,8 +53,8 @@ export default class Globals {
   // Sensors
   //   * Lidar
   //     lidarAngle = lidarSampling * (integer constant)
-  public lidarAngle = 60;
-  public lidarSampling = 30;
+  public lidarAngle = 1;
+  public lidarSampling = 1;
   public lidarDotSize = 4;
   public lidarNoiseAmplification = 40;
   public lidarNoiseOffset = 0.04;
@@ -82,15 +82,15 @@ export default class Globals {
     const height = p5.windowHeight;
 
     // walls
-    for (let i = 0; i < 5; i++) {
-      let x1 = p5.random(width);
-      let x2 = p5.random(width);
-      let y1 = p5.random(height);
-      let y2 = p5.random(height);
-      p5.stroke(this.wallColor);
-      this.walls[i] = new Boundary(p5, x1, y1, x2, y2);
-      p5.noStroke();
-    }
+    // for (let i = 0; i < 5; i++) {
+    //   let x1 = p5.random(width);
+    //   let x2 = p5.random(width);
+    //   let y1 = p5.random(height);
+    //   let y2 = p5.random(height);
+    //   p5.stroke(this.wallColor);
+    //   this.walls[i] = new Boundary(p5, x1, y1, x2, y2);
+    //   p5.noStroke();
+    // }
 
     // Edges of the screen
     p5.stroke(this.wallColor);

@@ -6,7 +6,7 @@ export default class Robot {
   private p5: P5;
 
   // Parameters for robot behavior
-  private position: Vector;
+  public position: Vector;
   private direction: Vector;
   private lidarSensor: LidarSensor;
 
@@ -42,11 +42,6 @@ export default class Robot {
       this.position.x + newDir.x * newPos.x,
       this.position.y + newDir.y * newPos.y
     );
-    // this._position.set(
-    //   this._position.x + newPos.x,
-    //   this._position.y + newPos.y
-    // );
-    // console.log(newDir);
     this.direction.set(newDir.x, newDir.y);
 
     // update sensor data
@@ -55,7 +50,7 @@ export default class Robot {
     }
   };
 
-  public show = (): void => {
+  public show = (index?: number): void => {
     // show sensor data
     if (this.lidarEnabled) {
       this.lidarSensor.show(this.lidarColor);
@@ -65,6 +60,7 @@ export default class Robot {
     this.p5.noStroke();
 
     // Outer circle
+    this.p5.stroke(this.robotHeadColor);
     this.p5.fill(this.robotColor);
     this.p5.ellipse(this.position.x, this.position.y, Globals.g().robotSize);
 
@@ -84,6 +80,14 @@ export default class Robot {
       Globals.g().robotSize / 4
     );
     this.p5.noFill();
+
+    if (index != null) {
+      this.p5.fill('Yellow');
+      this.p5.textSize(22);
+      this.p5.textAlign(this.p5.CENTER, this.p5.CENTER);
+      this.p5.text(index.toString(), this.position.x, this.position.y);
+      this.p5.noFill();
+    }
   };
 
   public setColor = (robotColor: Color, headColor: Color): void => {
@@ -103,5 +107,9 @@ export default class Robot {
     } else {
       this.lidarSensor.setVisual(Lidar.Visual.None);
     }
+  };
+
+  public getLidarReading = (): Array<number> => {
+    return this.lidarSensor.getLidarDistances();
   };
 }
