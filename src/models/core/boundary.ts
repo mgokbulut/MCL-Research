@@ -1,4 +1,5 @@
 import P5, { Vector } from 'p5';
+import { wallColor } from '../../globals';
 
 export default class Boundary {
   p5: P5;
@@ -12,7 +13,14 @@ export default class Boundary {
   }
 
   public show() {
-    this.p5.stroke(255);
+    this.p5.stroke(wallColor);
     this.p5.line(this.a.x, this.a.y, this.b.x, this.b.y);
   }
+
+  public static showWalls = (walls: Array<Boundary>): void => {
+    // Walls
+    for (let wall of walls) {
+      wall.show();
+    }
+  };
 }

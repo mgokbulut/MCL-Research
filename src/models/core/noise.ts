@@ -1,6 +1,5 @@
 import P5 from 'p5';
-
-import Globals from '../../globals';
+import { lidarNoiseOffset } from '../../globals';
 
 export class Noise {
   private static behavior: Noise.Behaviour;
@@ -12,7 +11,7 @@ export class Noise {
   // this is the counter (lidarNoiseCount += lidarNoiseOffset)
   private static lidarNoiseCount: number = 0;
   private static perlinNoise = (p5: P5): number => {
-    this.lidarNoiseCount += Globals.g().lidarNoiseOffset;
+    this.lidarNoiseCount += lidarNoiseOffset;
     return p5.noise(this.lidarNoiseCount) - 0.5;
   };
 

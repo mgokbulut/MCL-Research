@@ -1,6 +1,11 @@
 import P5, { Color, Vector } from 'p5';
+import {
+  lidarAngle,
+  lidarDotSize,
+  lidarNoiseAmplification,
+  lidarSampling,
+} from '../../globals';
 
-import Globals from '../../globals';
 import Boundary from '../core/boundary';
 import { Noise } from '../core/noise';
 import Ray from '../core/ray';
@@ -21,10 +26,10 @@ export class LidarSensor {
     this.p5 = p5;
     this.position = position;
     this.direction = direction;
-    this.lidarReading = Array<Vector>(Globals.g().lidarSampling);
-    this.lidarDistances = Array<number>(Globals.g().lidarSampling);
+    this.lidarReading = Array<Vector>(lidarSampling);
+    this.lidarDistances = Array<number>(lidarSampling);
 
-    this.rays = Array<Ray>(Globals.g().lidarSampling);
+    this.rays = Array<Ray>(lidarSampling);
     this.rotateLidar((x: number, y: number, i: number) => {
       this.rays[i] = new Ray(this.p5.createVector(x, y));
     });
@@ -35,9 +40,9 @@ export class LidarSensor {
   ): void => {
     let i: number = 0;
     for (
-      let angle = -Globals.g().lidarAngle / 2;
-      angle < Globals.g().lidarAngle / 2;
-      angle += Globals.g().lidarAngle / Globals.g().lidarSampling
+      let angle = -lidarAngle / 2;
+      angle < lidarAngle / 2;
+      angle += lidarAngle / lidarSampling
     ) {
       const rotated = this.p5
         .createVector(this.direction.x, this.direction.y)
@@ -107,7 +112,7 @@ export class LidarSensor {
   };
 
   private showLines = (color: Color) => {
-    for (let i = 0; i < Globals.g().lidarSampling; i++) {
+    for (let i = 0; i < lidarSampling; i++) {
       let closest: Vector = this.lidarReading[i];
 
       // v is the vector between 2 points
@@ -120,10 +125,8 @@ export class LidarSensor {
       this.p5.line(
         this.position.x,
         this.position.y,
-        closest.x +
-          v.x * Noise.getNoise(this.p5) * Globals.g().lidarNoiseAmplification,
-        closest.y +
-          v.y * Noise.getNoise(this.p5) * Globals.g().lidarNoiseAmplification
+        closest.x + v.x * Noise.getNoise(this.p5) * lidarNoiseAmplification,
+        closest.y + v.y * Noise.getNoise(this.p5) * lidarNoiseAmplification
       );
       this.p5.noFill();
       this.p5.noStroke();
@@ -131,7 +134,7 @@ export class LidarSensor {
   };
 
   private showDots = (color: Color) => {
-    for (let i = 0; i < Globals.g().lidarSampling; i++) {
+    for (let i = 0; i < lidarSampling; i++) {
       const closest: Vector = this.lidarReading[i];
 
       // v is the vector between 2 points
@@ -142,11 +145,9 @@ export class LidarSensor {
       this.p5.fill(color);
       this.p5.stroke(color);
       this.p5.ellipse(
-        closest.x +
-          v.x * Noise.getNoise(this.p5) * Globals.g().lidarNoiseAmplification,
-        closest.y +
-          v.y * Noise.getNoise(this.p5) * Globals.g().lidarNoiseAmplification,
-        Globals.g().lidarDotSize
+        closest.x + v.x * Noise.getNoise(this.p5) * lidarNoiseAmplification,
+        closest.y + v.y * Noise.getNoise(this.p5) * lidarNoiseAmplification,
+        lidarDotSize
       );
       this.p5.noFill();
       this.p5.noStroke();

@@ -1,7 +1,7 @@
 import Gaussian from 'multivariate-gaussian';
 import GGG from 'gaussian';
 import { calculateSD, calculateVariance } from './probability';
-import Globals from './globals';
+import { lidarSampling } from './globals';
 
 let test = true;
 
@@ -37,8 +37,8 @@ const singleGaussian = (mu_i: number, z_i: number) => {
   console.log('z_i: ' + z_i);
   console.log('mu_i: ' + mu_i);
   // const distribution = GGG(z_i, Math.pow(Math.abs(z_i - mu_i), 2));
-  // const distribution = GGG(z_i, Globals.g().minDimention);
-  // console.log(Globals.g().minDimention / 10);
+  // const distribution = GGG(z_i, minDimention);
+  // console.log(minDimention / 10);
   const distribution = GGG(z_i, 100);
   // Take a random sample using inverse transform sampling method.
   const ppf = distribution.ppf(mu_i);
@@ -79,7 +79,7 @@ const gaussDeneme = () => {
 };
 
 const gauss = (robotReading: Array<number>, particleReading: Array<number>) => {
-  let sigmaDimentions = Globals.g().lidarSampling;
+  let sigmaDimentions = lidarSampling;
   // Creates n x n identity matrix
   var sigma: Array<Array<number>> = new Array<Array<number>>(sigmaDimentions)
     .fill(null)
